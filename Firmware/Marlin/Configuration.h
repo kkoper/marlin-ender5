@@ -25,7 +25,7 @@
 //#define ENDER3_V2_V422_BOARD //Ender 3 V2 with V4.2.2 Board
 //#define ENDER3_V2_V427_BOARD //Ender 3 V2 with V4.2.7 Board
 
-//#define ENDER5_V422_BOARD    //Ender 5 with V4.2.2 Board
+#define ENDER5_V422_BOARD    //Ender 5 with V4.2.2 Board
 //#define ENDER5_V427_BOARD    //Ender 5 with V4.2.7 Board
 
 // V4.2.2 TMC Driver Settings - Uncomment if you have TMC drivers on a 4.2.2 Board to set driver timings
