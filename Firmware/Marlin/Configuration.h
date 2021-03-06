@@ -52,7 +52,7 @@
 
 // Ender 5 - Leadscrew Setting
 // If you have the new Ender 5/5 Pro Model that has the new 800steps/mm Z leadscrew uncomment the below option to set the correct steps/mm
-//#define ENDER5_NEW_LEADSCREW
+#define ENDER5_NEW_LEADSCREW
 
 //===========================================================================
 // *************************  END PRINTER SECTION   *************************
