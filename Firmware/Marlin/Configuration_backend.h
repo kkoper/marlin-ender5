@@ -6,7 +6,7 @@
 //======================= DO NOT MODIFY THIS FILE ===========================
 //===========================================================================
 
-#define UNIFIED_VERSION "TH3D UFW 2.23a"
+#define UNIFIED_VERSION "TH3D UFW 2.27"
 
 /**
  * TH3D Sanity Checks
@@ -14,6 +14,10 @@
 
 #if ENABLED(ABL_ENABLE) && ENABLED(S_CURVE_ACCELERATION)
   #error "S_CURVE_ACCELERATION is not compatible with ABL systems. Disable this and re-compile."
+#endif
+
+#if ENABLED(BLTOUCH) && DISABLED(CUSTOM_PROBE)
+  #error "You must uncomment the CUSTOM_PROBE option in the EZABL probe mount section and then enter your mount offsets into the Custom Probe section."
 #endif
 
 /**
@@ -94,9 +98,9 @@
   #define MAX_BED_POWER 255
   #if ENABLED(PIDTEMPBED)
     #ifndef DEFAULT_bedKp
-      #define DEFAULT_bedKp 10.00 // Define Marlin default bed PID if no machine specific PID is defined.
-      #define DEFAULT_bedKi .023
-      #define DEFAULT_bedKd 305.4
+      #define  DEFAULT_bedKp 113.36
+      #define  DEFAULT_bedKi 21.62
+      #define  DEFAULT_bedKd 148.59
     #endif
   #endif
 #endif
@@ -116,6 +120,14 @@
 
 #if ENABLED(CUSTOM_PROBE)
   #define ABL_ENABLE
+#endif
+#if ENABLED(ENDER6_OEM)
+  #define ABL_ENABLE
+  #define NOZZLE_TO_PROBE_OFFSET { -40, -14, 0 }
+#endif
+#if ENABLED(ENDER3_MAX_OEM)
+  #define ABL_ENABLE
+  #define NOZZLE_TO_PROBE_OFFSET { 57, -9, 0 }
 #endif
 #if ENABLED(KP3S_OEM_MOUNT)
   #define ABL_ENABLE
@@ -165,7 +177,27 @@
   #define NOZZLE_TO_PROBE_OFFSET { -46, -15, 0 }
   #define ABL_ENABLE
 #endif
-#if ENABLED(ENDER3_OEM) || ENABLED(ENDER5_OEM) || ENABLED(CR10_OEM) || ENABLED(CR10S_OEM) || ENABLED(ENDER5_PLUS_OEM) || ENABLED(CR20_OEM)
+#if ENABLED(ENDER3_OEM)
+  #define ABL_ENABLE
+  #define NOZZLE_TO_PROBE_OFFSET { -44, -10, 0 }
+#endif
+#if ENABLED(ENDER5_OEM)
+  #define ABL_ENABLE
+  #define NOZZLE_TO_PROBE_OFFSET { -44, -10, 0 }
+#endif
+#if ENABLED(CR10_OEM)
+  #define ABL_ENABLE
+  #define NOZZLE_TO_PROBE_OFFSET { -44, -10, 0 }
+#endif
+#if ENABLED(CR10S_OEM)
+  #define ABL_ENABLE
+  #define NOZZLE_TO_PROBE_OFFSET { -44, -10, 0 }
+#endif
+#if ENABLED(ENDER5_PLUS_OEM)
+  #define ABL_ENABLE
+  #define NOZZLE_TO_PROBE_OFFSET { -44, -10, 0 }
+#endif
+#if ENABLED(CR20_OEM)
   #define ABL_ENABLE
   #define NOZZLE_TO_PROBE_OFFSET { -44, -10, 0 }
 #endif
@@ -177,11 +209,19 @@
   #define NOZZLE_TO_PROBE_OFFSET { 22, -50, 0 }
   #define ABL_ENABLE
 #endif
-#if ENABLED(CR10_VOLCANO) || ENABLED(TORNADO_VOLCANO)
+#if ENABLED(CR10_VOLCANO)
   #define NOZZLE_TO_PROBE_OFFSET { 30, 12, 0 }
   #define ABL_ENABLE
 #endif
-#if ENABLED(CR10_V6HEAVYDUTY) || ENABLED(TORNADO_V6HEAVYDUTY)
+#if ENABLED(TORNADO_VOLCANO)
+  #define NOZZLE_TO_PROBE_OFFSET { 30, 12, 0 }
+  #define ABL_ENABLE
+#endif
+#if ENABLED(CR10_V6HEAVYDUTY)
+  #define NOZZLE_TO_PROBE_OFFSET { 63, 0, 0 }
+  #define ABL_ENABLE
+#endif
+#if ENABLED(TORNADO_V6HEAVYDUTY)
   #define NOZZLE_TO_PROBE_OFFSET { 63, 0, 0 }
   #define ABL_ENABLE
 #endif
@@ -265,7 +305,7 @@
   #define NOZZLE_TO_PROBE_OFFSET { -48, -2, 0 }
   #define ABL_ENABLE
 #endif
-#if ENABLED(ENDER4_OEM_LEFT)
+#if ENABLED(ENDER4_OEM)
   #define NOZZLE_TO_PROBE_OFFSET { -53, -19, 0 }
   #define ABL_ENABLE
 #endif
@@ -291,7 +331,7 @@
   #define LEVELED_SEGMENT_LENGTH 5.0
   
   #undef Z_PROBE_OFFSET_RANGE_MIN
-  #define Z_PROBE_OFFSET_RANGE_MIN    -5
+  #define Z_PROBE_OFFSET_RANGE_MIN    -10
   #undef Z_PROBE_OFFSET_RANGE_MAX
   #define Z_PROBE_OFFSET_RANGE_MAX     1
   
@@ -321,6 +361,7 @@
   
   #define MULTIPLE_PROBING 2
   #define AUTO_BED_LEVELING_BILINEAR
+  #define ENABLE_LEVELING_FADE_HEIGHT
   #define GRID_MAX_POINTS_X EZABL_POINTS
   #define GRID_MAX_POINTS_Y GRID_MAX_POINTS_X
   #define Z_SAFE_HOMING
@@ -412,22 +453,24 @@
 #endif
 
 #define Z_PROBE_SPEED_FAST HOMING_FEEDRATE_Z
-#define Z_PROBE_SPEED_SLOW (Z_PROBE_SPEED_FAST / 2)
 
 #if ENABLED(BLTOUCH)
   #define Z_CLEARANCE_DEPLOY_PROBE   8
   #define Z_CLEARANCE_BETWEEN_PROBES 5
   #define Z_CLEARANCE_MULTI_PROBE    5
+  #define Z_PROBE_SPEED_SLOW (Z_PROBE_SPEED_FAST / 2)
   #define ENDSTOPPULLUP_ZMIN
   #define ENDSTOPPULLUP_ZMIN_PROBE
 #elif ENABLED(EZABL_SUPERFASTPROBE) && ENABLED(ABL_ENABLE)
-  #define Z_CLEARANCE_DEPLOY_PROBE   1
+  #define Z_CLEARANCE_DEPLOY_PROBE   2
   #define Z_CLEARANCE_BETWEEN_PROBES 2
-  #define Z_CLEARANCE_MULTI_PROBE    1
+  #define Z_CLEARANCE_MULTI_PROBE    2
+  #define Z_PROBE_SPEED_SLOW (Z_PROBE_SPEED_FAST / 1.5)
 #else
   #define Z_CLEARANCE_DEPLOY_PROBE   5
   #define Z_CLEARANCE_BETWEEN_PROBES 3
   #define Z_CLEARANCE_MULTI_PROBE    3
+  #define Z_PROBE_SPEED_SLOW (Z_PROBE_SPEED_FAST / 2)
 #endif
 
 #define HOST_KEEPALIVE_FEATURE

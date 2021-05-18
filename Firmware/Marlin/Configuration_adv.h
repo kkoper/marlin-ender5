@@ -427,6 +427,19 @@
 #endif
 
 #if ENABLED(MKS_SGENL_V2_HE1_FAN)
+  #ifdef E1_STEPS_MM
+    #if ENABLED(SINGLENOZZLE)
+      #define USE_CONTROLLER_FAN
+      #define CONTROLLER_FAN_PIN       P2_06
+      #define CONTROLLERFAN_IDLE_TIME     60
+      #define CONTROLLERFAN_SPEED_MIN      0
+      #define CONTROLLERFAN_SPEED_ACTIVE 255
+      #define CONTROLLER_FAN_EDITABLE
+      #if ENABLED(CONTROLLER_FAN_EDITABLE)
+        #define CONTROLLER_FAN_MENU
+      #endif
+    #endif
+  #else
   #define USE_CONTROLLER_FAN
   #define CONTROLLER_FAN_PIN       P2_06
   #define CONTROLLERFAN_IDLE_TIME     60
@@ -435,6 +448,7 @@
   #define CONTROLLER_FAN_EDITABLE
   #if ENABLED(CONTROLLER_FAN_EDITABLE)
     #define CONTROLLER_FAN_MENU
+    #endif
   #endif
 #endif
 
@@ -518,6 +532,8 @@
   #define E0_AUTO_FAN_PIN 7
 #elif ENABLED(MKS_SGENL_V2_FAN2)
   #define E0_AUTO_FAN_PIN P1_04
+#elif (ENABLED(WANHAO_I3MINI) || ENABLED(WANHAO_I3MINI_V2)) && ENABLED(WANHAO_I3MINI_E0_FAN)
+  #define E0_AUTO_FAN_PIN 12
 #else
   #define E0_AUTO_FAN_PIN -1
 #endif
@@ -1126,7 +1142,7 @@
 
   // Add Probe Z Offset calibration to the Z Probe Offsets menu
   #if HAS_BED_PROBE
-    #define PROBE_OFFSET_WIZARD
+    //#define PROBE_OFFSET_WIZARD
     #if ENABLED(PROBE_OFFSET_WIZARD)
       #define PROBE_OFFSET_START -5.0   // Estimated nozzle-to-probe Z offset, plus a little extra
     #endif
@@ -1686,7 +1702,7 @@
  */
 #define BABYSTEPPING
 #if ENABLED(BABYSTEPPING)
-  //#define INTEGRATED_BABYSTEPPING         // EXPERIMENTAL integration of babystepping into the Stepper ISR
+  #define INTEGRATED_BABYSTEPPING           // EXPERIMENTAL integration of babystepping into the Stepper ISR - Enabling fixes Z Stalling on some TMC drivers
   #define BABYSTEP_WITHOUT_HOMING
   #define BABYSTEP_ALWAYS_AVAILABLE         // Allow babystepping at all times (not just during movement).
   //#define BABYSTEP_XY                     // Also enable X/Y Babystepping. Not supported on DELTA!
@@ -2507,8 +2523,14 @@
     #define E0_CHAIN_POS     -1
   #endif
 
-  #if AXIS_IS_TMC(E1)
-    #define E1_CURRENT      800
+  #if AXIS_IS_TMC(E1) || ENABLED(DIY_TMCBOARD)
+    #if ENABLED(PANCAKE_STEPPER)
+      #define E1_CURRENT    600
+    #elif E0_MOTOR_CURRENT > 0
+      #define E1_CURRENT E1_MOTOR_CURRENT
+    #else
+      #define E1_CURRENT    800
+    #endif
     #define E1_MICROSTEPS    16
     #define E1_RSENSE         0.11
     #define E1_CHAIN_POS     -1
